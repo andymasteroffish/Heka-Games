@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+
+Project("{D1401AF7-5025-92DA-DEBA-89B3D32778CF}") = "HIddenBrotherPrototype", "Assembly-UnityScript.unityproj", "{764665EE-A0EA-1AB8-77B7-58846B4A76D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{764665EE-A0EA-1AB8-77B7-58846B4A76D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764665EE-A0EA-1AB8-77B7-58846B4A76D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764665EE-A0EA-1AB8-77B7-58846B4A76D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764665EE-A0EA-1AB8-77B7-58846B4A76D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	
+EndGlobal
