@@ -1,0 +1,20 @@
+Using git
+
+ssh -T git@github.com
+-log into git
+
+cd to the folder we're located in
+-OR type "cd " and then drag the folder into your terminal window
+
+git clone git@github.com/andymasteroffish/Heka-Games.git
+-updates the folder with any files that have been added
+
+git add [name of folder or file]
+-after you've made or updated things, add them
+
+git commit -m'Message describing the commit'
+-Saves the changes. Make sure to say what you did in this update
+
+git push
+-send that shit to git
+-if you don't do this, nothing happens
