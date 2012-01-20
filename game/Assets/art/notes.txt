@@ -1,3 +1,0 @@
-250 pixels to 1 unity plane
-
-the dot I'm placing on the image is round brush, size 100
