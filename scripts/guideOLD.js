@@ -9,10 +9,6 @@ var pic:GameObject;
 
 private var isActive:boolean; 
 
-//flying in
-private var enterTime:float;
-private var waitingToEnter:boolean;
-
 //leaving
 private var isLeaving:boolean;
 private var leavingGoal:Vector3;
@@ -23,6 +19,8 @@ var pauseAfterConvo:Number;			//how logn to wait after the convo
 var wordBalloon:GameObject;
 var wordOffset:Vector3;		//where to place the word balloon in relation to the goal point
 private var isTalking:boolean;
+private var talkTimer:Number;		//make sure we stay on a screen for a set amount of time
+var pauseTime:Number;				//how long to wait before allowing abutton press
 
 //this would proabbly work, but might not be necessary if we use Sprite Manager
 /*
@@ -40,36 +38,45 @@ function Awake(){
 	isLeaving=false;
 	isTalking=false;
 	
-	leavingTimer=99999999;	//make this far too big to happen by itself
+	talkTimer=0;
+	leavingTimer=99999999;	//make this far to big to happen by itself
 	
-	enterTime=0;
-	waitingToEnter=false;
-	
+	flyIn();
 }
 
 function Update () {
 
-	//see if the guide is waiting to enter
-	if (waitingToEnter){
-		enterTime-=Time.deltaTime;
-		if (enterTime<0){
-			waitingToEnter=false;
-			flyIn();
-		}	
-	}
-
 	if (isActive){
-		//set the goal to be enar the player
 		var goal:Vector3=player.transform.position+offset;
+		
 		//add some noise
 		goal.x+=(Mathf.PerlinNoise(Time.time*speed,1)-0.5)*range;
 		goal.y+=(Mathf.PerlinNoise(Time.time*speed,1000)-0.5)*range;	//just get it slightly offset from x
+		
 		//have the guide get close to it
 		transform.position=Vector3.Lerp (transform.position, goal, Time.deltaTime * springiness);
-			
-		//position the word balloon and check on a few things if a convo is hapenning
-		wordBalloon.transform.position=player.transform.position+offset+wordOffset;
 		
+		if (Time.time>3 && Time.time<4)
+			startConvo();
+			
+		//positiont he word balloon and check on a few things if a convo is hapenning
+		if (isTalking){
+			//keep the balloon on the goal, not with the guide
+			//wordBalloon.transform.position=Vector3.Lerp (wordBalloon.transform.position, player.transform.position+offset+wordOffset, Time.deltaTime * springiness);
+			wordBalloon.transform.position=player.transform.position+offset+wordOffset;
+			
+			//lower the timer
+			talkTimer-=Time.deltaTime;
+			
+			//if the button was pressed and enough time has passed, get rid of the message and fly away
+			if (Input.GetAxis("Jump")>0 && talkTimer<0){
+				//make the wordBalloon invisible
+				wordBalloon.renderer.enabled=false;
+				//start the timer to fly away
+				leavingTimer=pauseAfterConvo;
+			}
+		
+		}
 		
 		//check if it is time to go
 		leavingTimer-=Time.deltaTime;
@@ -89,17 +96,6 @@ function Update () {
 	}
 }
 
-//starts the count down to fly in
-function startConvo(time:float){
-	enterTime=time;
-	waitingToEnter=true;
-}
-
-//starts count down to flying away
-function endConvo(){
-	//start the timer to fly away
-	leavingTimer=pauseAfterConvo;
-}
 
 //causes the guide to fly in from offscreen
 function flyIn(){
@@ -117,7 +113,6 @@ function flyIn(){
 	leavingTimer=9999999;
 }
 
-
 //causes the guide to fly away
 function flyOut(){
 	isActive=false;
@@ -131,17 +126,9 @@ function flyOut(){
 
 
 //starts a conversation
-function showText(wordsImg:Texture){
+function startConvo(){
 	isTalking=true;
 	wordBalloon.renderer.enabled=true;
-	wordBalloon.renderer.material.mainTexture=wordsImg;
-}
-
-
-//remove the text from the screen
-function killText(){
-	isTalking=false;
-	wordBalloon.renderer.enabled=false;
 }
 
 
