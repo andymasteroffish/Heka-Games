@@ -91,8 +91,10 @@ function Update () {
 			}
 			
 			if (curPic==6){
+				//We're done!
 				door.SendMessage("enable");
 				print("done");
+				guide.SendMessage("endConvo");
 			}
 				
 			waitTimer=waitTime;
@@ -108,7 +110,5 @@ function Update () {
 
 function playerEnter(){
 	playerInBedroom=true;
-	//wait a bit before showing the balloon
-	waitTimer=waitTime*2;
 }
 

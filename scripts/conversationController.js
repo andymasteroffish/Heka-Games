@@ -12,6 +12,8 @@ var playerYSlide:float;
 //how much to zoom
 var cameraZoom:float;
 
+var brotherConvo:boolean=false;
+
 private var currentBalloon:Transform;
 
 private var activeConvo:boolean = false;
@@ -45,35 +47,37 @@ function Update () {
 	
 		//for the first phase, the dream is talking. Player can just advacne the text
 		if (phase==0){
-			if (Input.GetAxis("Jump")>0 && timer<0)
+			if (Input.GetKeyDown(KeyCode.Space) && timer<0)
 				setupPlayerResponse();
 		}
 		
 		//After that, the player can give their response
 		if (phase==1){
-			//place the selection pointer
-			var balloonSize:Bounds=currentBalloon.renderer.bounds;
-			var selectionHeight:float=5;	//how much space between selections
-			var placement : Vector3=new Vector3(0,0,0);
-			placement.x= currentBalloon.transform.position.x-5.5;
-			placement.y= currentBalloon.transform.position.y+2- selection*selectionHeight;
-			placement.z=-50;
-			//actual put it there
-			pointer.transform.position=placement;
-			
-			//up and down to make selection
-			if (Input.GetAxis("Vertical")>0)
-				selection=0;
-			if (Input.GetAxis("Vertical")<0)
-				selection=1;
+			if(!brotherConvo){		//no choices can be amde when talking to the brother
+				//place the selection pointer
+				var balloonSize:Bounds=currentBalloon.renderer.bounds;
+				var selectionHeight:float=5;	//how much space between selections
+				var placement : Vector3=new Vector3(0,0,0);
+				placement.x= currentBalloon.transform.position.x-5.5;
+				placement.y= currentBalloon.transform.position.y+2- selection*selectionHeight;
+				placement.z=-50;
+				//actual put it there
+				pointer.transform.position=placement;
+				
+				//up and down to make selection
+				if (Input.GetAxis("Vertical")>0)
+					selection=0;
+				if (Input.GetAxis("Vertical")<0)
+					selection=1;
+			}
 			//space to confirm
-			if (Input.GetAxis("Jump")>0 && timer<0)
+			if (Input.GetKeyDown(KeyCode.Space) && timer<0)
 				setupDreamResponse();
 		}
 		
 		//Dream gets one more response, after which the convo is over
 		if (phase==2){
-			if (Input.GetAxis("Jump")>0 && timer<0)
+			if (Input.GetKeyDown(KeyCode.Space) && timer<0)
 				endConvo();
 		}
 	
@@ -84,6 +88,9 @@ function startTalk(){
 	if (!activeConvo){
 		phase=0;
 		activeConvo=true;	//we're talking now
+		
+		//if this is the brother, make him stop shouting
+		if (brotherConvo)	this.SendMessage("stopShouting");
 		
 		//zoom the camera
 		gameCamera.SendMessage("startZoom", cameraZoom);
