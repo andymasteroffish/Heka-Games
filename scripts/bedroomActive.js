@@ -7,9 +7,12 @@ function Awake(){
 }
 
 function OnTriggerEnter(other : Collider) {
+	//if the player moves through this, tell the tagrget and kill self
 	var object= other.gameObject;
-	if (object.name=="player")
+	if (object.name=="player"){
 		target.SendMessage("playerEnter");
+		Destroy(gameObject);
+	}
 }
 
 function OnTriggerExit (other : Collider) {

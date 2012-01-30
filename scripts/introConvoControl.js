@@ -20,6 +20,7 @@ var reminderTextOffset:Vector3;
 var pics:Texture[];
 private var curPic:int=-1;
 var reminderTextures:Texture[];
+private var remindersActive:boolean=true;	//are is there reminder text on screen?
 
 private var playerInBedroom:boolean=false;
 
@@ -80,6 +81,12 @@ function Update () {
 	//if we are showing a balloon, wait for a keypress to kill it and move on
 	else{
 		if(Input.GetKeyDown(KeyCode.Space)){
+			//if the rmeinder text is still on screen, kill it
+			if (remindersActive){
+				remindersActive=false;
+				Destroy(reminderText);
+			}
+		
 			//check which number balloon this is, so we know how to killit
 			if (curPic<5 || curPic==6)
 				guide.SendMessage("killText");
@@ -93,8 +100,9 @@ function Update () {
 			if (curPic==6){
 				//We're done!
 				door.SendMessage("enable");
-				print("done");
 				guide.SendMessage("endConvo");
+				//kill this object
+				Destroy(gameObject);
 			}
 				
 			waitTimer=waitTime;

@@ -1,4 +1,5 @@
 var controller : CharacterController;
+var inBedPrefab:GameObject;
 var speed:float;
 var runSpeed:float;
 var followDist:float;	//how close the dream will get to the player
@@ -88,7 +89,6 @@ function Update () {
 
 	//handle following the player home
 	if (isActive){
-		print(transform.position);
 		//did we bump our head
 		if ((controller.collisionFlags & CollisionFlags.Above) != 0)
 	        moving.y=0;
@@ -121,6 +121,14 @@ function Update () {
     		
     		//if we hit the door, kill this object and spawn the bedroom brother
     		if (transform.position.x<runGoal){
+    			//instantiate the in bed brother
+				var newBrother:GameObject=Instantiate(inBedPrefab, transform.position, transform.rotation );
+				newBrother.transform.position=Vector3(907,-189,0);
+				
+				//if there is a word balloon, destroy it
+				if (wordBalloonActive)	Destroy(wordBalloon);
+    			
+    			//kill this object
     			Destroy(gameObject);
     		}
     			
@@ -128,6 +136,7 @@ function Update () {
     	
     	//see if it is time to make a comment
     	if (!commentsDone && wordBalloonTimer>timeBeforeComment && curComment==0){
+    		wordBalloonActive=true;
     		//instantiate a word balloon
 			wordBalloon=Instantiate(wordBalloonPrefab, transform.position, transform.rotation );
 			wordBalloon.transform.Rotate(Vector3(90,180,0));
@@ -143,6 +152,7 @@ function Update () {
     		if (curComment==commentPics.Length){
     			//kill the balloon
     			Destroy(wordBalloon);
+    			wordBalloonActive=false;
     			//and mark that we're done
     			commentsDone=true;
     		}
@@ -180,9 +190,6 @@ function startFollow(){
  Destroy(hitBox);
 }
 
-function disappear(){
-	Destroy(gameObject);
-}
 
 //called by convo controller when the player starts talking to the brother
 function stopShouting(){
