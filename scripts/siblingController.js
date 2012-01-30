@@ -1,5 +1,6 @@
 var controller : CharacterController;
 var speed:float;
+var runSpeed:float;
 var followDist:float;	//how close the dream will get to the player
 var leftLimit:float;	//no moving further left than this point
 var rightLimit:float;	//no moving further left than this point
@@ -29,9 +30,14 @@ var commentPics:Texture[];				//holds the images
 private var commentsDone:boolean=false;	//are the comments done?
 
 private var isActive:boolean=false;
-
 private var moving : Vector3 = new Vector3(0,0,0);
 private var player : GameObject;
+
+//when he gets close to the door, the brother runs toward it
+private var running:boolean=false;
+var runStart:float;				//xlocation where the brother starts running
+var runGoal:float;				//xlocation of the door where the brother dissapears
+
 
 
 function Awake(){
@@ -82,6 +88,7 @@ function Update () {
 
 	//handle following the player home
 	if (isActive){
+		print(transform.position);
 		//did we bump our head
 		if ((controller.collisionFlags & CollisionFlags.Above) != 0)
 	        moving.y=0;
@@ -89,21 +96,37 @@ function Update () {
 	    //if following, follow the player
     	moving.x=0;
     	
-    	//see how far the dream is from the player
-    	var xDist:float=Mathf.Abs(player.transform.position.x-transform.position.x);
-    	if (xDist>followDist){
-	    	if (player.transform.position.x<transform.position.x){
-	    		if(transform.position.x>leftLimit){
-	    			moving.x-=speed;
-	    		}
-	    	}else{
-	    		if(transform.position.x<rightLimit)
-	    			moving.x+=speed;
+    	if (!running){
+	    	//see how far the brother is from the player
+	    	var xDist:float=Mathf.Abs(player.transform.position.x-transform.position.x);
+	    	if (xDist>followDist){
+		    	if (player.transform.position.x<transform.position.x){
+		    		if(transform.position.x>leftLimit){
+		    			moving.x-=speed;
+		    		}
+		    	}else{
+		    		if(transform.position.x<rightLimit)
+		    			moving.x+=speed;
+		    	}
 	    	}
+	    	
+	    	//check if the brother has reached the running point
+	    	if (transform.position.x<runStart)
+	    		running=true;
+    	}
+    	
+    	//if the brother is close to the door, just run towards it
+    	if (running){
+    		moving.x-=runSpeed;
+    		
+    		//if we hit the door, kill this object and spawn the bedroom brother
+    		if (transform.position.x<runGoal){
+    			Destroy(gameObject);
+    		}
+    			
     	}
     	
     	//see if it is time to make a comment
-    	print(commentsDone+"  "+wordBalloonTimer+"  "+curComment);
     	if (!commentsDone && wordBalloonTimer>timeBeforeComment && curComment==0){
     		//instantiate a word balloon
 			wordBalloon=Instantiate(wordBalloonPrefab, transform.position, transform.rotation );
@@ -116,19 +139,29 @@ function Update () {
     	
     	//see if the user advanced the comment
     	if(Input.GetKeyDown(KeyCode.Space) && curComment>0 && !commentsDone){
-    		wordBalloon.renderer.material.mainTexture = commentPics[curComment];
-    		//advance curComment and check if we're done
-    		if (++curComment==commentPics.Length){
+    		//check if we're done
+    		if (curComment==commentPics.Length){
     			//kill the balloon
     			Destroy(wordBalloon);
     			//and mark that we're done
     			commentsDone=true;
     		}
+    		
+    		else{
+	    		wordBalloon.renderer.material.mainTexture = commentPics[curComment];
+	    		//advance curComment
+	    		curComment++;
+    		}
+    		
     	}
     	
     	//if there is a word balloon, keep it near the brother
-    	if (curComment>0 && !commentsDone)
+    	if (curComment>0 && !commentsDone){
+    		//make sure the balloon is on the right
+    		siblingOffset.x=Mathf.Abs(siblingOffset.x);
+    		//and place it
     		wordBalloon.transform.position=transform.position+siblingOffset;
+    	}
 	    
 	}
 	

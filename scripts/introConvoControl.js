@@ -38,7 +38,7 @@ function Awake(){
 	
 	//have the guide fly in after a little while
 	guide.SendMessage("startConvo",2);
-	waitTimer=5;
+	waitTimer=3;
 	
 }
 
