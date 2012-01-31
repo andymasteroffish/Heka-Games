@@ -35,7 +35,7 @@ function Awake(){
 	reminderText.renderer.material.mainTexture = reminderTextures[0];
 	
 	//disable the door for now
-	door.SendMessage("disable");
+	//door.SendMessage("disable"); PUT THIS BACK IN
 	
 	//have the guide fly in after a little while
 	guide.SendMessage("startConvo",2);
