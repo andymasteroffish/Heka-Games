@@ -1,6 +1,6 @@
 var speed : float;
 var controller : CharacterController;
-var art:GameObject;	//holds the art and animaitons
+//var art:GameObject;	//holds the art and animaitons
 var crownArt:GameObject;
 var crownArtTexture:Texture;
 var streamSpeed:float;	//how fast the stream moves the player
@@ -40,7 +40,7 @@ private var bounceRoomActive:boolean=true;	//becomes true when the player starts
 private var bounceMove:Vector3=new Vector3(0,0,0);
 
 //art
-var artPlane:GameObject;
+var artSprite:tk2dSprite;
 
 function Update () {
 	//gravity
@@ -131,11 +131,13 @@ function Update () {
 		controller.Move(moving);
 	}
 	
+	
 	//have the art face the right direction
 	if (Input.GetAxis("Horizontal")<0)
-		artPlane.renderer.material.mainTextureScale=Vector2(1,1);
+		artSprite.scale=Vector3(1,1,1);
 	if (Input.GetAxis("Horizontal")>0)
-		artPlane.renderer.material.mainTextureScale=Vector2(-1,1);
+		artSprite.scale=Vector3(-1,1,1);
+	
 	
 	//stay in place in 2d plane
 	controller.transform.position.z=0;
