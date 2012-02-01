@@ -1,6 +1,8 @@
 var body:Rigidbody;
-//var bouncePower:float;
 var friction:float;
+
+var bounceFromPlayer:float;		//how far up the ball bounces when touching the player
+var startRandomVal:float;		//how much variance there is from the starting direction
 
 private var dir:Vector3 = new Vector3(0,0,0);
 var gravity:Vector3;
@@ -51,12 +53,12 @@ function OnTriggerEnter(other : Collider) {
 	}
 	
 	if (object.name=="playerTrigger"){
-		body.AddForce(Vector3.up*8);
+		body.AddForce(Vector3.up*bounceFromPlayer);
 		player.SendMessage("ballBounce");
 	}
 	
 }
 
 function start(dir: Vector3){
-	body.AddForce(dir* (4+Random.value*4));
+	body.AddForce(dir* (startRandomVal+Random.value*startRandomVal));
 }	
