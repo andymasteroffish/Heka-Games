@@ -1,5 +1,5 @@
 var body:Rigidbody;
-var bouncePower:float;
+//var bouncePower:float;
 var friction:float;
 
 private var dir:Vector3 = new Vector3(0,0,0);
@@ -51,12 +51,12 @@ function OnTriggerEnter(other : Collider) {
 	}
 	
 	if (object.name=="playerTrigger"){
-		body.AddForce(Vector3.up*200);
+		body.AddForce(Vector3.up*8);
 		player.SendMessage("ballBounce");
 	}
 	
 }
 
 function start(dir: Vector3){
-	body.AddForce(dir* (100+Random.value*100));
+	body.AddForce(dir* (4+Random.value*4));
 }	
