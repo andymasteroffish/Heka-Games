@@ -196,16 +196,15 @@ function OnTriggerExit (other : Collider) {
 
 function OnControllerColliderHit (hit : ControllerColliderHit) {
 	
-	var body:Rigidbody=hit.collider.attachedRigidbody;
-	//get out if it is not a rigidbody
-	if (body == null)
+	var object:Collider=hit.collider;
+	//get out if it is not a collider
+	if (object == null)
         return;
-        
-	//if this is tagged with steep, make sure the player can't jump
-	//steepWall=(body.tag=="steep");
+
 		
-	//check if the player just reached solid ground
-	if (bounceRoomActive && body.tag=="Toy2StartPlatform"){
+	//check if the player just reached solid ground from the bounce toy
+	if (bounceRoomActive && object.tag=="Toy2StartPlatform"){
+		print("hit that shit");
 		bounceRoomActive=false;
 		gameObject.Find("bounceSoundPlayer").SendMessage("testNoteOrder");
 	}

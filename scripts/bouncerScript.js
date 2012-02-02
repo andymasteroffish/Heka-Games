@@ -1,9 +1,7 @@
 var num:int;
 private var controller:GameObject;
 
-var picPlane:GameObject;
-var normPic:Texture;
-var altPic:Texture;
+var pic:tk2dSprite;
 
 function Awake(){
 	//find the sound player
@@ -16,8 +14,9 @@ function makeSound(){
 }
 
 function flashPic(){
-	picPlane.renderer.material.mainTexture = altPic;
+	//set the sprite to the alternate pic for a second
+	pic.spriteId=1;
 	yield WaitForSeconds(0.2);
-	picPlane.renderer.material.mainTexture = normPic;
+	pic.spriteId=0;
 	
 }
