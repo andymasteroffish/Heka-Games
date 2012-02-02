@@ -1,10 +1,11 @@
 var controller : CharacterController;
 var speed:float;
 var jumpPower:float;
+var gravity:float;
 var followDist:float;	//how close the dream will get to the player
 var minDist:float;		//how close the player must be to thwe dream for it to follow
 var yFollowDist:float;	//how far above the player the dog likes to stay
-var art:GameObject;
+var art:tk2dSprite;
 var hitBox:GameObject;
 
 private var isActive:boolean=true;
@@ -31,7 +32,7 @@ function Update () {
 		
 		
 		//sideways gravity
-		moving.x+= -0.1;
+		moving.x+= -gravity;
 		
 	    
 	    //if following, follow the player
@@ -65,8 +66,6 @@ function OnTriggerEnter(other : Collider) {
 	//should use a tag here
 	if (object.name=="siblingHitBox"){
 		Destroy(gameObject);
-		//tell the sibling to change image
-		gameObject.Find("siblingArt").SendMessage("changePic",1);
 	}
 }
 
@@ -83,8 +82,4 @@ function stopFollow(){
 function endCustom(){
 	isActive=false;
 	//flip the image
-	//Vector3(90,180,0)
-	art.transform.eulerAngles=Vector3(90,180,0);
-	art.transform.position.x+= -14.46;
-	art.transform.position.y+= 10.49;
 }
