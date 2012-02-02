@@ -6,28 +6,20 @@ var followDist:float;	//how close the dream will get to the player
 var leftLimit:float;	//no moving further left than this point
 var rightLimit:float;	//no moving further left than this point
 
-var hitBox:GameObject;
 
 //before being found by the player, the brother is shouting for help
 private var isShouting:boolean=true;	//is the brother still calling out for help
 var timeBetweenShouts:float;			//time in seconds between showing word balloons
 var shoutTime:float;					//how long each word balloon is displayed for
-private var wordBalloonTimer:float;				
-var wordBalloonPrefab:GameObject;		//points to the word balloon prefab
-private var wordBalloon:GameObject;		//stores the instantiation of the prefab
-private var wordBalloonActive:boolean=false;	//is the word balloon currently being shown?
-private var curShout:int=0;				//which shouting image are we using?
-var shoutPics:Texture[];				//holds the images for the word balloons
+private var wordBalloonActive:boolean=false;	//is the borther currently saying something?
+private var wordBalloonTimer:float;
+private var curShout:int=1;				//which shouting image are we using?
 
-//where to put the word balloons relative to the brother and player
-var playerOffset:Vector3;
-var siblingOffset:Vector3;
-
+var distanceToActivate:float;			//how close the player must be to stop the brother from shouting
 
 //on the way back to the room, the brother syays a few things to the player
 var timeBeforeComment:float;			//how long after starting the walk to start talking
 private var curComment:int=0;			//which comment we're on
-var commentPics:Texture[];				//holds the images
 private var commentsDone:boolean=false;	//are the comments done?
 
 private var isActive:boolean=false;
@@ -62,28 +54,22 @@ function Update () {
 		//is it time to add a new balloon?
 		if (!wordBalloonActive && wordBalloonTimer>timeBetweenShouts){
 			wordBalloonActive=true;
-			wordBalloonTimer=0;
-			
-			//instantiate a word balloon
-			wordBalloon=Instantiate(wordBalloonPrefab, transform.position, transform.rotation );
-			wordBalloon.transform.Rotate(Vector3(90,180,0));
-			//set the image
-			wordBalloon.renderer.material.mainTexture = shoutPics[curShout];
-			wordBalloonActive=true;
-			//put it near the brother
-			wordBalloon.transform.position=transform.position+siblingOffset;
+			this.SendMessage("showText",curShout);
 			
 			//switch between the different shouts
-			if (++curShout==shoutPics.Length)	curShout=0;
+			if (++curShout==3)	curShout=1;
 		}
 		
 		//is it time to get rid of one?
 		if (wordBalloonActive && wordBalloonTimer>shoutTime){
 			wordBalloonActive=false;
+			this.SendMessage("killText");
 			wordBalloonTimer=0;
-			
-			//kill the balloon
-			Destroy(wordBalloon);
+		}
+		
+		//check if the player is clsoe enough to move on to the next phase
+		if (Vector3.Distance(transform.position, player.transform.position)<distanceToActivate){
+			stopShouting();
 		}
 	}
 
@@ -126,7 +112,7 @@ function Update () {
 				newBrother.transform.position=Vector3(907,-189,0);
 				
 				//if there is a word balloon, destroy it
-				if (wordBalloonActive)	Destroy(wordBalloon);
+				//if (wordBalloonActive)	Destroy(wordBalloon);
     			
     			//kill this object
     			Destroy(gameObject);
@@ -136,12 +122,14 @@ function Update () {
     	
     	//see if it is time to make a comment
     	if (!commentsDone && wordBalloonTimer>timeBeforeComment && curComment==0){
+    	/*
     		wordBalloonActive=true;
     		//instantiate a word balloon
 			wordBalloon=Instantiate(wordBalloonPrefab, transform.position, transform.rotation );
 			wordBalloon.transform.Rotate(Vector3(90,180,0));
 			//set the image
 			wordBalloon.renderer.material.mainTexture = commentPics[curComment];
+			*/
 			
 			curComment++;	//increase the comment
     	}
@@ -149,29 +137,22 @@ function Update () {
     	//see if the user advanced the comment
     	if(Input.GetKeyDown(KeyCode.Space) && curComment>0 && !commentsDone){
     		//check if we're done
-    		if (curComment==commentPics.Length){
+    		if (curComment==2){
     			//kill the balloon
-    			Destroy(wordBalloon);
+    			//Destroy(wordBalloon);
     			wordBalloonActive=false;
     			//and mark that we're done
     			commentsDone=true;
     		}
     		
     		else{
-	    		wordBalloon.renderer.material.mainTexture = commentPics[curComment];
+	    		//wordBalloon.renderer.material.mainTexture = commentPics[curComment];
 	    		//advance curComment
 	    		curComment++;
     		}
     		
     	}
     	
-    	//if there is a word balloon, keep it near the brother
-    	if (curComment>0 && !commentsDone){
-    		//make sure the balloon is on the right
-    		siblingOffset.x=Mathf.Abs(siblingOffset.x);
-    		//and place it
-    		wordBalloon.transform.position=transform.position+siblingOffset;
-    	}
 	    
 	}
 	
@@ -186,8 +167,7 @@ function OnTriggerEnter(other : Collider) {
 //start the brother following the player and kill the hit box
 function startFollow(){
  isActive=true;
- wordBalloonTimer=0;	//reste the timer so he can make comments
- Destroy(hitBox);
+ wordBalloonTimer=0;	//reset the timer so he can make comments
 }
 
 
@@ -195,12 +175,14 @@ function startFollow(){
 function stopShouting(){
 	isShouting=false;
 	
-	//if there is a word balloon currently, kill it
+	//freeze the player
+	player.SendMessage("freeze");
+	
+	//show the start of the conversation
 	if (wordBalloonActive){
-		wordBalloonActive=false;
-		//kill the balloon
-		Destroy(wordBalloon);
+		this.SendMessage("showText",3);
 	}
+	
 }
 
 
