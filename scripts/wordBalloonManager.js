@@ -17,7 +17,6 @@ function Update(){
 	
 	//if this is on the right, flip the X
 	if (onLeft[curSprite])	displayOffset.x=-offset.x;
-	
 	pic.transform.position=transform.position+displayOffset;
 
 }
@@ -25,7 +24,8 @@ function Update(){
 //causes the balloon of the given number to show up
 function showText(num:int){
 	//make sure this number is within the range
-	if (num<0 || num>onLeft.Length){	
+	if (num<0 || num>=onLeft.Length){	
+		print("BAD TEXT CALL: "+num);	//post the error to the console
 		killText();		//clear anything that might be displayed
 		return;	
 	}
@@ -33,6 +33,11 @@ function showText(num:int){
 	//otherwise set the pic to that sprite
 	pic.spriteId=num;
 	curSprite=num;
+	
+	//put the balloon in place
+	var displayOffset:Vector3=offset;
+	if (onLeft[curSprite])	displayOffset.x=-offset.x;
+	pic.transform.position=transform.position+displayOffset;
 }
 
 //makes the balloon go back to being transparent

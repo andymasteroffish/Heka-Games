@@ -90,6 +90,8 @@ function startConvo(time:float){
 function endConvo(){
 	//start the timer to fly away
 	leavingTimer=pauseAfterConvo;
+	//kill any text balloon
+	this.SendMessage("killText");
 }
 
 //causes the guide to fly in from offscreen
@@ -104,6 +106,9 @@ function flyIn(){
 	
 	//set the leaving timer to a huge number
 	leavingTimer=9999999;
+	
+	//kill any text balloon
+	this.SendMessage("killText");
 }
 
 
